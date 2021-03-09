@@ -1,9 +1,18 @@
-<!-- Code from d3-graph-gallery.com -->
+<!-- Code adapted from d3-graph-gallery.com -->
 <!DOCTYPE html>
 <meta charset="utf-8">
 
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- CSS goes here -->
+<style>
+.graduation{
+  stroke-width: 0,5px;
+	stroke: gray;
+	stroke-dasharray: 10,5;
+}
+</style>
 
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
@@ -11,9 +20,9 @@
 <script>
 
 // set the dimensions and margins of the graph
-var margin = {top: 10, right: 30, bottom: 30, left: 60},
+var margin = {top: 10, right: 30, bottom: 30, left: 90},
     width = 700 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+    height = 550 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
 var svg = d3.select("#my_dataviz")
@@ -27,6 +36,27 @@ var svg = d3.select("#my_dataviz")
 //Read the data
 d3.csv("S2T0.csv", function(data) {
 
+  svg.append('line')
+    .attr('class', 'graduation')
+    .attr('x1', 0)
+    .attr('y1', (height/4)*3 - height/32)
+    .attr('x2', width)
+    .attr('y2', (height/4)*3 - height/32)
+  
+   svg.append('line')
+    .attr('class', 'graduation')
+    .attr('x1', 0)
+    .attr('y1', (height/4)*2 - height/32)
+    .attr('x2', width)
+    .attr('y2', (height/4)*2 - height/32)
+
+  svg.append('line')
+    .attr('class', 'graduation')
+    .attr('x1', 0)
+    .attr('y1', (height/4) - height/32)
+    .attr('x2', width)
+    .attr('y2', (height/4) - height/32)
+
   // Add X axis
   var x = d3.scaleTime()
     .domain([new Date("2000-01-01 08:47:00"), new Date("2000-01-01 08:51:00")])
@@ -37,7 +67,11 @@ d3.csv("S2T0.csv", function(data) {
 
   // Add Y axis
   var y = d3.scalePoint()
-    .domain(["colere", "joie", "tristesse", "peur"])
+    .domain(["joie (c)","colere (c)","tristesse (c)","peur (c)",
+             "joie (en)","colere (en)" ,"tristesse (en)","peur (en)",
+             "joie (el)","colere (el)" ,"tristesse (el)","peur (el)",
+             "joie (p)","colere (p)" ,"tristesse (p)","peur (p)",""
+            ])
     .rangeRound([0,height]);
   svg.append("g")
     .call(d3.axisLeft(y));
@@ -49,18 +83,42 @@ d3.csv("S2T0.csv", function(data) {
     .enter()
     .append("circle")
       .attr("cx", function (d) { return x(Date.parse(d.Timecode))})
-      .attr("cy", function (d) { return y(d.discours); } )
+      .attr("cy", function (d) {
+
+        role_code = "";
+        //console.log(d.Participant);
+        switch (d.Participant){
+          case "corporate":
+            role_code = "(c)";
+            break;
+          case "econome":
+            role_code = "(en)";
+            break;
+          case "ecolo":
+            role_code = "(el)";
+            break;
+          case "presse":
+            role_code = "(p)";
+            break;
+          default :
+            role_code = "(none)";
+            break;
+        }
+        console.log(d.discours.concat(' ',role_code))
+        return y(d.discours.concat(' ',role_code))
+      
+      })
       .attr("r", 5)
       .style("fill",function (d){
-              if (d.Participant == "Melanie")
-                return "#355070"
-              else if (d.Participant == "Aurore")
-                return "#B56576"
-              else if (d.Participant == "Bastien")
-                return "#EAAC8B"
+              if (d.Participant == "corporate")
+                return "#0e73aa"
+              else if (d.Participant == "econome")
+                return "#ffd400"
+              else if (d.Participant == "ecolo")
+                return "#72a53b"
+              else if (d.Participant == "presse")
+                return "#d12332"
               else  
-                return "#3A3335"
-      })
-})
-
+                return "#3a3335"
+      })})
 </script>
