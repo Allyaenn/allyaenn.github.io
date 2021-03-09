@@ -1,0 +1,13 @@
+Session,Tache,Timecode,Participant,Type Intervention,discours,C1,C2,C3,Infos_supp
+2,s0,2000-01-01 08:47:11,Melanie,feeling,joie,groupe,,,
+2,s0,2000-01-01 08:47:22,Aurore,feeling,colere,theme,Cyril,,
+2,s0,2000-01-01 08:47:50,Bastien,feeling,colere,theme,Melanie,,
+2,s0,2000-01-01 08:47:53,Aurore,feeling,joie,theme,Melanie,,
+2,s0,2000-01-01 08:48:01,Bastien,feeling,tristesse,comportement,Cyril,,
+2,s0,2000-01-01 08:48:51,Melanie,feeling,colere,Bastien,,,
+2,s0,2000-01-01 08:48:55,Aurore,feeling,joie,Bastien,comportement,,
+2,s0,2000-01-01 08:49:10,Melanie,feeling,joie,Cyril,Aurore,,
+2,s0,2000-01-01 08:49:30,Aurore,feeling,colere,comportement,Cyril,,
+2,s0,2000-01-01 08:49:38,Aurore,feeling,tristesse,comportement,Melanie,,
+2,s0,2000-01-01 08:50:44,Melanie,feeling,colere,Aurore,,,
+2,s0,2000-01-01 08:50:59,Melanie,feeling,colere,theme,groupe,,

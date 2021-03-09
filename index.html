@@ -1,1 +1,66 @@
-Hello World
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+<script>
+
+// set the dimensions and margins of the graph
+var margin = {top: 10, right: 30, bottom: 30, left: 60},
+    width = 700 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+//Read the data
+d3.csv("S2T0.csv", function(data) {
+
+  // Add X axis
+  var x = d3.scaleTime()
+    .domain([new Date("2000-01-01 08:47:00"), new Date("2000-01-01 08:51:00")])
+    .range([ 0, width ]);
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+  // Add Y axis
+  var y = d3.scalePoint()
+    .domain(["colere", "joie", "tristesse", "peur"])
+    .rangeRound([0,height]);
+  svg.append("g")
+    .call(d3.axisLeft(y));
+
+  // Add dots
+  svg.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return x(Date.parse(d.Timecode))})
+      .attr("cy", function (d) { return y(d.discours); } )
+      .attr("r", 5)
+      .style("fill",function (d){
+              if (d.Participant == "Melanie")
+                return "#355070"
+              else if (d.Participant == "Aurore")
+                return "#B56576"
+              else if (d.Participant == "Bastien")
+                return "#EAAC8B"
+              else  
+                return "#3A3335"
+      })
+})
+
+</script>
