@@ -4,6 +4,7 @@
 
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://unpkg.com/d3-simple-slider"></script>
 
 <!-- CSS goes here -->
 <style>
@@ -16,9 +17,10 @@
 
 <!-- Create a div where the graph will take place -->
 <div id="my_dataviz"></div>
+<p id="value"></p>
+<div id="slider"></div>
 
 <script>
-
 // set the dimensions and margins of the graph
 var margin = {top: 10, right: 30, bottom: 30, left: 90},
     width = 700 - margin.left - margin.right,
@@ -120,5 +122,69 @@ d3.csv("S2T0.csv", function(data) {
                 return "#d12332"
               else  
                 return "#3a3335"
-      })})
+      })
+
+  svg.append('g')
+    .selectAll("dot")
+    .data(data).exit().remove()
+
+  var slider = d3
+    .sliderHorizontal()
+    .min(new Date("2000-01-01 08:47:00"))
+    .max(new Date("2000-01-01 08:51:00"))
+    .step(1000)
+    .width(700)
+    .displayValue(false)
+    .on('onchange', (val) => {
+      filtered_data = data.filter(d => new Date(d.Timecode) <= val);
+      console.log("data filtered")
+
+      var circles = svg.selectAll("circle").data(filtered_data);
+      circles.exit().remove();//remove unneeded circles
+      circles.enter().append("circle")
+                    .attr("cx", function (d) { return x(Date.parse(d.Timecode))})
+                    .attr("cy", function (d) {
+                        role_code = "";
+                        //console.log(d.Participant);
+                        switch (d.Participant){
+                          case "corporate":
+                            role_code = "(c)";
+                            break;
+                          case "econome":
+                            role_code = "(en)";
+                            break;
+                          case "ecolo":
+                            role_code = "(el)";
+                            break;
+                          case "presse":
+                            role_code = "(p)";
+                            break;
+                          default :
+                            role_code = "(none)";
+                            break;}
+                        console.log(d.discours.concat(' ',role_code))
+                        return y(d.discours.concat(' ',role_code))})
+                    .attr("r", 5)
+                    .style("fill",function (d){
+                            if (d.Participant == "corporate")
+                              return "#0e73aa"
+                            else if (d.Participant == "econome")
+                              return "#ffd400"
+                            else if (d.Participant == "ecolo")
+                              return "#72a53b"
+                            else if (d.Participant == "presse")
+                              return "#d12332"
+                            else  
+                              return "#3a3335"})
+    });
+
+  d3.select('#slider')
+    .append('svg')
+    .attr('width', 900)
+    .attr('height', 100)
+    .append('g')
+    .attr('transform', 'translate(30,30)')
+    .call(slider);
+  
+})
 </script>
