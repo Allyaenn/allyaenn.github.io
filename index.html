@@ -81,7 +81,7 @@ d3.csv("S2T0.csv", function(data) {
   // Add dots
   svg.append('g')
     .selectAll("dot")
-    .data(data)
+    .data([])
     .enter()
     .append("circle")
       .attr("cx", function (d) { return x(Date.parse(d.Timecode))})
