@@ -52,7 +52,7 @@ var svg = d3.select("#my_dataviz")
           "translate(" + margin.left + "," + margin.top + ")");
 
 //Read the data
-d3.csv("S5.csv", function(data) {
+d3.csv("S1_f.csv", function(data) {
 
   //what are min and max ?
   var maxTC = new Date(d3.max(data, function(d) { return new Date(d.Timecode);}));
@@ -72,7 +72,8 @@ d3.csv("S5.csv", function(data) {
   emotion_label = ["joie (c)","colere (c)","tristesse (c)","peur (c)",
                    "joie (en)","colere (en)" ,"tristesse (en)","peur (en)",
                    "joie (el)","colere (el)" ,"tristesse (el)","peur (el)",
-                   "joie (p)","colere (p)" ,"tristesse (p)","peur (p)",""]
+                   "joie (p)","colere (p)" ,"tristesse (p)","peur (p)",
+                   "joie (r)","colere (r)" ,"tristesse (r)","peur (r)",""]
   // Add X axis
   var x = d3.scaleTime()
     .domain([borneMin,borneMax])
@@ -97,9 +98,7 @@ d3.csv("S5.csv", function(data) {
     .append("circle")
       .attr("cx", function (d) { return x(Date.parse(d.Timecode))})
       .attr("cy", function (d) {
-
         role_code = "";
-        //console.log(d.Participant);
         switch (d.User_1_Role){
           case "Corporate":
             role_code = "(c)";
@@ -112,6 +111,9 @@ d3.csv("S5.csv", function(data) {
             break;
           case "Presse":
             role_code = "(p)";
+            break;
+          case "Robot":
+            role_code = "(r)";
             break;
           default :
             role_code = "(none)";
@@ -136,13 +138,13 @@ d3.csv("S5.csv", function(data) {
       })
       
    // graduations
-   for (i=1; i<=3 ;i++){
+   for (i=1; i<=4 ;i++){
     svg.append('line')
     .attr('class', 'big_graduation')
     .attr('x1', 0)
-    .attr('y1', (height/4)*i - height/34)
+    .attr('y1', (height/5)*i - height/34)
     .attr('x2', width)
-    .attr('y2', (height/4)*i - height/34)
+    .attr('y2', (height/5)*i - height/34)
    }
   
   for (i = 0; i<emotion_label.length; i++){
@@ -189,6 +191,9 @@ d3.csv("S5.csv", function(data) {
                             break;
                           case "Presse":
                             role_code = "(p)";
+                            break;
+                          case "Robot":
+                            role_code = "(r)";
                             break;
                           default :
                             role_code = "(none)";
@@ -286,5 +291,17 @@ svg_legend.append("text")
             .attr("x", 130)
             .attr("y", 75)
             .text("Pressé");
+
+// Robot
+svg_legend.append("circle")
+            .attr("cx", 200)
+            .attr("cy", 45)
+            .attr("r", 5)
+            .style("fill","#3a3335");
+
+svg_legend.append("text")
+            .attr("x", 215)
+            .attr("y", 50)
+            .text("Robot");
 
 </script>
