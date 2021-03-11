@@ -16,11 +16,17 @@ body {
   display: table-cell;
   vertical-align: top;
 }
-.graduation{
-  stroke-width: 0,5px;
+.big_graduation{
+  stroke-width: 1px;
 	stroke: gray;
-	stroke-dasharray: 10,5;
 }
+
+.little_graduation{
+  stroke-width: 0.5px;
+	stroke: lightslategray;
+	stroke-dasharray: 10.5;
+}
+
 </style>
 
 <!-- Create a div where the graph will take place -->
@@ -49,27 +55,10 @@ var svg = d3.select("#my_dataviz")
 //Read the data
 d3.csv("S2T0.csv", function(data) {
 
-  svg.append('line')
-    .attr('class', 'graduation')
-    .attr('x1', 0)
-    .attr('y1', (height/4)*3 - height/32)
-    .attr('x2', width)
-    .attr('y2', (height/4)*3 - height/32)
-  
-   svg.append('line')
-    .attr('class', 'graduation')
-    .attr('x1', 0)
-    .attr('y1', (height/4)*2 - height/32)
-    .attr('x2', width)
-    .attr('y2', (height/4)*2 - height/32)
-
-  svg.append('line')
-    .attr('class', 'graduation')
-    .attr('x1', 0)
-    .attr('y1', (height/4) - height/32)
-    .attr('x2', width)
-    .attr('y2', (height/4) - height/32)
-
+  emotion_label = ["joie (c)","colere (c)","tristesse (c)","peur (c)",
+                   "joie (en)","colere (en)" ,"tristesse (en)","peur (en)",
+                   "joie (el)","colere (el)" ,"tristesse (el)","peur (el)",
+                   "joie (p)","colere (p)" ,"tristesse (p)","peur (p)",""]
   // Add X axis
   var x = d3.scaleTime()
     .domain([new Date("2000-01-01 08:47:00"), new Date("2000-01-01 08:51:00")])
@@ -80,12 +69,9 @@ d3.csv("S2T0.csv", function(data) {
 
   // Add Y axis
   var y = d3.scalePoint()
-    .domain(["joie (c)","colere (c)","tristesse (c)","peur (c)",
-             "joie (en)","colere (en)" ,"tristesse (en)","peur (en)",
-             "joie (el)","colere (el)" ,"tristesse (el)","peur (el)",
-             "joie (p)","colere (p)" ,"tristesse (p)","peur (p)",""
-            ])
+    .domain(emotion_label)
     .rangeRound([0,height]);
+
   svg.append("g")
     .call(d3.axisLeft(y));
 
@@ -123,6 +109,7 @@ d3.csv("S2T0.csv", function(data) {
       })
       .attr("r", 5)
       .style("fill",function (d){
+
               if (d.Participant == "corporate")
                 return "#0e73aa"
               else if (d.Participant == "econome")
@@ -134,10 +121,29 @@ d3.csv("S2T0.csv", function(data) {
               else  
                 return "#3a3335"
       })
+      
+   // graduations
 
-  svg.append('g')
-    .selectAll("dot")
-    .data(data).exit().remove()
+   for (i=1; i<=3 ;i++){
+    svg.append('line')
+    .attr('class', 'big_graduation')
+    .attr('x1', 0)
+    .attr('y1', (height/4)*i - height/34)
+    .attr('x2', width)
+    .attr('y2', (height/4)*i - height/34)
+   }
+  
+  for (i = 0; i<emotion_label.length; i++){
+    svg.append('line')
+    .attr('class', 'little_graduation')
+    .attr('x1', 0)
+    .attr('y1', y(emotion_label[i])+1)
+    .attr('x2', width)
+    .attr('y2', y(emotion_label[i])+1)
+  }
+
+// Slider -----------------------------------------------------------------------
+  var vis_guide = svg.append('line').attr("class","big_graduation").attr('x1', 0).attr('y1',0).attr('x2',0).attr('y2',0)
 
   var slider = d3
     .sliderHorizontal()
@@ -151,7 +157,9 @@ d3.csv("S2T0.csv", function(data) {
       console.log("data filtered")
 
       var circles = svg.selectAll("circle").data(filtered_data);
-      circles.exit().remove();//remove unneeded circles
+      circles.exit().remove();
+      
+      //remove unneeded circles
       circles.enter().append("circle")
                     .attr("cx", function (d) { return x(Date.parse(d.Timecode))})
                     .attr("cy", function (d) {
@@ -187,6 +195,15 @@ d3.csv("S2T0.csv", function(data) {
                               return "#d12332"
                             else  
                               return "#3a3335"})
+                      .style("opacity","0")
+                      .transition()
+                      .duration(1000)
+                      .style("opacity", "100");
+      
+      vis_guide.attr('x1', x(val))
+               .attr('y1', 0)
+               .attr('x2', x(val))
+               .attr('y2', width);               
     });
 
   d3.select('#slider')
@@ -199,13 +216,12 @@ d3.csv("S2T0.csv", function(data) {
   
 })
 
+//Legend -----------------------------------------------------------------------
+
 var svg_legend = d3.select("#legend")
   .append("svg")
     .attr("width", 400)
     .attr("height", 100)
-  // .append("g")
-  //   .attr("transform",
-  //         "translate(" + 5 + "," + 15 + ")");
 
 svg_legend.append("text")
           .attr("x", 0)
@@ -213,7 +229,6 @@ svg_legend.append("text")
           .text("Légende")
           .attr("font-weight","bold");
           
-
 // Corporate
 svg_legend.append("circle")
             .attr("cx", 5)
