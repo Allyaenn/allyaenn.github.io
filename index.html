@@ -8,6 +8,14 @@
 
 <!-- CSS goes here -->
 <style>
+body {
+  margin: 40px;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+.content{
+  display: table-cell;
+  vertical-align: top;
+}
 .graduation{
   stroke-width: 0,5px;
 	stroke: gray;
@@ -16,13 +24,16 @@
 </style>
 
 <!-- Create a div where the graph will take place -->
-<div id="my_dataviz"></div>
-<p id="value"></p>
+<div id="my_dataviz" class="content"></div>
+<div id="controls" class="content">
+<div id="legend"></div>
 <div id="slider"></div>
+</div>
+
 
 <script>
 // set the dimensions and margins of the graph
-var margin = {top: 10, right: 30, bottom: 30, left: 90},
+var margin = {top: 0, right: 30, bottom: 30, left: 60},
     width = 700 - margin.left - margin.right,
     height = 550 - margin.top - margin.bottom;
 
@@ -133,7 +144,7 @@ d3.csv("S2T0.csv", function(data) {
     .min(new Date("2000-01-01 08:47:00"))
     .max(new Date("2000-01-01 08:51:00"))
     .step(1000)
-    .width(700)
+    .width(300)
     .displayValue(false)
     .on('onchange', (val) => {
       filtered_data = data.filter(d => new Date(d.Timecode) <= val);
@@ -180,11 +191,73 @@ d3.csv("S2T0.csv", function(data) {
 
   d3.select('#slider')
     .append('svg')
-    .attr('width', 900)
+    .attr('width', 400)
     .attr('height', 100)
     .append('g')
     .attr('transform', 'translate(30,30)')
     .call(slider);
   
 })
+
+var svg_legend = d3.select("#legend")
+  .append("svg")
+    .attr("width", 400)
+    .attr("height", 100)
+  // .append("g")
+  //   .attr("transform",
+  //         "translate(" + 5 + "," + 15 + ")");
+
+svg_legend.append("text")
+          .attr("x", 0)
+          .attr("y", 15)
+          .text("Légende")
+          .attr("font-weight","bold");
+          
+
+// Corporate
+svg_legend.append("circle")
+            .attr("cx", 5)
+            .attr("cy", 45)
+            .attr("r", 5)
+            .style("fill","#0e73aa");
+
+svg_legend.append("text")
+            .attr("x", 20)
+            .attr("y", 50)
+            .text("Corporate");
+
+// Econome
+svg_legend.append("circle")
+            .attr("cx", 5)
+            .attr("cy", 70)
+            .attr("r", 5)
+            .style("fill","#ffd400");
+
+svg_legend.append("text")
+            .attr("x", 20)
+            .attr("y", 75)
+            .text("Econome");
+// Ecolo
+svg_legend.append("circle")
+            .attr("cx", 115)
+            .attr("cy", 45)
+            .attr("r", 5)
+            .style("fill","#72a53b");
+
+svg_legend.append("text")
+            .attr("x", 130)
+            .attr("y", 50)
+            .text("Ecolo");
+// Presse
+svg_legend.append("circle")
+            .attr("cx", 115)
+            .attr("cy", 70)
+            .attr("r", 5)
+            .style("fill","#d12332");
+
+svg_legend.append("text")
+            .attr("x", 130)
+            .attr("y", 75)
+            .text("Pressé");
+
 </script>
