@@ -170,8 +170,11 @@ console.log(tt);
 d3.csv(filename, function(data) {
 
   //what are min and max ?
-  var maxTC = new Date(d3.max(data, function(d) { return new Date(tt.t4.fin);}));
-  var minTC = new Date(d3.min(data, function(d) { return new Date(tt.t0.deb);}));
+  var maxTC = new Date(tt.t4.fin);
+  var minTC = new Date(tt.t0.deb);
+
+  // var minTC = new Date(tt.t0.deb);
+  // var maxTC = new Date(tt.t0.deb);
 
   console.log("xtc : "+ maxTC +"\n ntc : "+minTC)
 
@@ -181,6 +184,11 @@ d3.csv(filename, function(data) {
   borneMin.setSeconds(0);
   borneMax.setMinutes(borneMax.getMinutes()+1)
   borneMax.setSeconds(0);
+
+  // borneMin.setSeconds(0);
+  // borneMax.setHours(borneMax.getHours()+1)
+  // borneMax.setSeconds(0);
+
 
   console.log("xb : "+ borneMax +"\n nb : "+borneMin)
 
