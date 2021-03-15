@@ -79,6 +79,47 @@ pointer-events: none;
 </div>
 
 <script>
+
+// timecode data
+
+var task_timecodes = {
+  s1 : {
+    t0 : {deb : "2000-01-01 08:34:33", fin : "2000-01-01 08:37:42"},
+    t1 : {deb : "2000-01-01 08:40:12", fin : "2000-01-01 08:43:46"},
+    t2 : {deb : "2000-01-01 08:45:07", fin : "2000-01-01 08:49:28"},
+    t3 : {deb : "2000-01-01 08:52:05", fin : "2000-01-01 08:54:18"},
+    t4 : {deb : "2000-01-01 08:55:36", fin : "2000-01-01 08:58:48"}
+  },
+  s2 : {
+    t0 : {deb : "2000-01-01 08:46:39", fin : "2000-01-01 08:51:02"},
+    t1 : {deb : "2000-01-01 08:55:07", fin : "2000-01-01 08:57:27"},
+    t2 : {deb : "2000-01-01 08:59:31", fin : "2000-01-01 09:03:49"},
+    t3 : {deb : "2000-01-01 09:05:34", fin : "2000-01-01 09:09:35"},
+    t4 : {deb : "2000-01-01 09:11:09", fin : "2000-01-01 09:16:09"}
+  },
+  s3 : {
+    t0 : {deb : "2000-01-01 13:16:14", fin : "2000-01-01 13:28:09"},
+    t1 : {deb : "2000-01-01 13:32:51", fin : "2000-01-01 13:39:09"},
+    t2 : {deb : "2000-01-01 13:41:14", fin : "2000-01-01 13:48:42"},
+    t3 : {deb : "2000-01-01 13:49:49", fin : "2000-01-01 13:58:39"},
+    t4 : {deb : "2000-01-01 14:00:49", fin : "2000-01-01 14:12:19"}
+  },
+  s4 : {
+    t0 : {deb : "2000-01-01 15:31:54", fin : "2000-01-01 15:37:02"},
+    t1 : {deb : "2000-01-01 15:40:58", fin : "2000-01-01 15:44:40"},
+    t2 : {deb : "2000-01-01 15:47:12", fin : "2000-01-01 15:52:09"},
+    t3 : {deb : "2000-01-01 15:53:43", fin : "2000-01-01 15:59:02"},
+    t4 : {deb : "2000-01-01 16:01:17", fin : "2000-01-01 16:04:32"}
+  },
+  s5 : {
+    t0 : {deb : "2000-01-01 15:19:41", fin : "2000-01-01 15:23:49"},
+    t1 : {deb : "2000-01-01 15:26:40", fin : "2000-01-01 15:30:43"},
+    t2 : {deb : "2000-01-01 15:32:17", fin : "2000-01-01 15:36:05"},
+    t3 : {deb : "2000-01-01 15:37:47", fin : "2000-01-01 15:42:47"},
+    t4 : {deb : "2000-01-01 15:45:26", fin : "2000-01-01 15:53:02"}
+  }
+}
+ 
 // set the dimensions and margins of the graph
 var margin = {top: 0, right: 30, bottom: 30, left: 60},
     width = 900 - margin.left - margin.right,
@@ -93,6 +134,8 @@ var svg = d3.select("#my_dataviz")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
+drawLegend();
+
 var tab_files = ["S1_f.csv","S2_f.csv","S3_f.csv","S4_f.csv","S5_f.csv"];
 
 d3.select("select").on("change",function(d){
@@ -103,75 +146,6 @@ d3.select("select").on("change",function(d){
     d3.select("#slider_val").html("");
     drawGraph(selected);
 })
-
-var svg_legend = d3.select("#legend")
-  .append("svg")
-    .attr("width", 400)
-    .attr("height", 100)
-
-svg_legend.append("text")
-          .attr("x", 0)
-          .attr("y", 15)
-          .text("Légende")
-          .attr("font-weight","bold");
-          
-// Corporate
-svg_legend.append("circle")
-            .attr("cx", 5)
-            .attr("cy", 45)
-            .attr("r", 5)
-            .style("fill","#0e73aa");
-
-svg_legend.append("text")
-            .attr("x", 20)
-            .attr("y", 50)
-            .text("Corporate");
-
-// Econome
-svg_legend.append("circle")
-            .attr("cx", 5)
-            .attr("cy", 70)
-            .attr("r", 5)
-            .style("fill","#ffd400");
-
-svg_legend.append("text")
-            .attr("x", 20)
-            .attr("y", 75)
-            .text("Econome");
-// Ecolo
-svg_legend.append("circle")
-            .attr("cx", 115)
-            .attr("cy", 45)
-            .attr("r", 5)
-            .style("fill","#72a53b");
-
-svg_legend.append("text")
-            .attr("x", 130)
-            .attr("y", 50)
-            .text("Ecolo");
-// Presse
-svg_legend.append("circle")
-            .attr("cx", 115)
-            .attr("cy", 70)
-            .attr("r", 5)
-            .style("fill","#d12332");
-
-svg_legend.append("text")
-            .attr("x", 130)
-            .attr("y", 75)
-            .text("Pressé");
-
-// Robot
-svg_legend.append("circle")
-            .attr("cx", 200)
-            .attr("cy", 45)
-            .attr("r", 5)
-            .style("fill","#3a3335");
-
-svg_legend.append("text")
-            .attr("x", 215)
-            .attr("y", 50)
-            .text("Robot");
 
 function drawGraph(filename){
 
@@ -189,11 +163,15 @@ var y = d3.scalePoint()
 svg.append("g")
   .call(d3.axisLeft(y));
 //Read the data
+
+var tt = fetch_task_timecode(filename);
+console.log(tt);
+
 d3.csv(filename, function(data) {
 
   //what are min and max ?
-  var maxTC = new Date(d3.max(data, function(d) { return new Date(d.Timecode);}));
-  var minTC = new Date(d3.min(data, function(d) { return new Date(d.Timecode);}));
+  var maxTC = new Date(d3.max(data, function(d) { return new Date(tt.t4.fin);}));
+  var minTC = new Date(d3.min(data, function(d) { return new Date(tt.t0.deb);}));
 
   console.log("xtc : "+ maxTC +"\n ntc : "+minTC)
 
@@ -231,6 +209,8 @@ d3.csv(filename, function(data) {
     .attr('x2', width)
     .attr('y2', y(emotion_label[i])+1)
   }
+
+  drawBreaks(tt,x);
 
   // Slider -----------------------------------------------------------------------
   var vis_guide = svg.append('line').attr("class","big_graduation").attr('x1', 0).attr('y1',0).attr('x2',0).attr('y2',0)
@@ -301,7 +281,6 @@ d3.csv(filename, function(data) {
                           d3.select(this).style("fill","#fc6d00")
                         })
                           
-
                         .on("mouseout", function() {
                         d3.select("#tooltip").classed("hidden", true);
                         d3.select(this).style("fill",function (d){
@@ -325,7 +304,7 @@ d3.csv(filename, function(data) {
       vis_guide.attr('x1', x(val))
                .attr('y1', 0)
                .attr('x2', x(val))
-               .attr('y2', width);
+               .attr('y2', height);
       
       val_date = new Date(val)
 
@@ -343,6 +322,133 @@ d3.csv(filename, function(data) {
     .attr('transform', 'translate(30,30)')
     .call(slider);
 })}
+
+function drawLegend(){
+  var svg_legend = d3.select("#legend")
+  .append("svg")
+    .attr("width", 400)
+    .attr("height", 100)
+
+  svg_legend.append("text")
+            .attr("x", 0)
+            .attr("y", 15)
+            .text("Légende")
+            .attr("font-weight","bold");
+            
+  // Corporate
+  svg_legend.append("circle")
+              .attr("cx", 5)
+              .attr("cy", 45)
+              .attr("r", 5)
+              .style("fill","#0e73aa");
+
+  svg_legend.append("text")
+              .attr("x", 20)
+              .attr("y", 50)
+              .text("Corporate");
+
+  // Econome
+  svg_legend.append("circle")
+              .attr("cx", 5)
+              .attr("cy", 70)
+              .attr("r", 5)
+              .style("fill","#ffd400");
+
+  svg_legend.append("text")
+              .attr("x", 20)
+              .attr("y", 75)
+              .text("Econome");
+  // Ecolo
+  svg_legend.append("circle")
+              .attr("cx", 115)
+              .attr("cy", 45)
+              .attr("r", 5)
+              .style("fill","#72a53b");
+
+  svg_legend.append("text")
+              .attr("x", 130)
+              .attr("y", 50)
+              .text("Ecolo");
+  // Presse
+  svg_legend.append("circle")
+              .attr("cx", 115)
+              .attr("cy", 70)
+              .attr("r", 5)
+              .style("fill","#d12332");
+
+  svg_legend.append("text")
+              .attr("x", 130)
+              .attr("y", 75)
+              .text("Pressé");
+
+  // Robot
+  svg_legend.append("circle")
+              .attr("cx", 200)
+              .attr("cy", 45)
+              .attr("r", 5)
+              .style("fill","#3a3335");
+
+  svg_legend.append("text")
+              .attr("x", 215)
+              .attr("y", 50)
+              .text("Robot");
+}
+
+function fetch_task_timecode (filename){
+  switch (filename){
+    case "S1_f.csv":
+      return task_timecodes.s1;
+      break;
+    case "S2_f.csv":
+      return task_timecodes.s2;
+      break;
+    case "S3_f.csv":
+      return task_timecodes.s3;
+      break;
+    case "S4_f.csv":
+      return task_timecodes.s4;
+      break;
+    case "S5_f.csv":
+      return task_timecodes.s5;
+      break;
+  }
+}
+
+function drawBreaks (this_tt, fx){
+
+  svg.append("rect")
+      .attr("x", fx(new Date(this_tt.t0.fin)))
+      .attr("y", 0)
+      .attr("width", fx(new Date(this_tt.t1.deb))-fx(new Date(this_tt.t0.fin)))
+      .attr("height", height)
+      .style("fill","#0e73aa")
+      .style("fill-opacity","10%");
+  
+  svg.append("rect")
+      .attr("x", fx(new Date(this_tt.t1.fin)))
+      .attr("y", 0)
+      .attr("width", fx(new Date(this_tt.t2.deb))-fx(new Date(this_tt.t1.fin)))
+      .attr("height", height)
+      .style("fill","#0e73aa")
+      .style("fill-opacity","10%");
+  
+  svg.append("rect")
+      .attr("x", fx(new Date(this_tt.t2.fin)))
+      .attr("y", 0)
+      .attr("width", fx(new Date(this_tt.t3.deb))-fx(new Date(this_tt.t2.fin)))
+      .attr("height", height)
+      .style("fill","#0e73aa")
+      .style("fill-opacity","10%");
+
+  svg.append("rect")
+      .attr("x", fx(new Date(this_tt.t3.fin)))
+      .attr("y", 0)
+      .attr("width", fx(new Date(this_tt.t4.deb))-fx(new Date(this_tt.t3.fin)))
+      .attr("height", height)
+      .style("fill","#0e73aa")
+      .style("fill-opacity","10%");
+
+}
 
 //Legend -----------------------------------------------------------------------
 </script>
