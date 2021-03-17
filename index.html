@@ -278,14 +278,20 @@ d3.csv(filename, function(data) {
                     .style("opacity","0")
                     .on("mouseover", function(d) {
                         var xPosition = parseFloat(d3.select(this).attr("cx"))+50;
-                        var yPosition = parseFloat(d3.select(this).attr("cy"))-70;
+
+                        if (d.User_1_Role == "Corporate")
+                          var yPosition = parseFloat(d3.select(this).attr("cy"))+70;
+                        else
+                          var yPosition = parseFloat(d3.select(this).attr("cy"))-70;
+
+                        const ts_split = d.Timecode.split(' ');
 
                         var tooltip_div = d3.select("#tooltip")
                                             .style("left", xPosition + "px")
                                             .style("top", yPosition + "px");
                         
                         tooltip_div.select("#value_tc")
-                                   .text(d.Timecode);
+                                   .text(ts_split[1]);
 
                         tooltip_div.select("#value_c1")
                                    .text(d.Target_1_Role);
