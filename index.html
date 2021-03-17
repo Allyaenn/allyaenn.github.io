@@ -58,8 +58,9 @@ pointer-events: none;
 
 <div id="my_dataviz" class="content">
   <div id="tooltip" class="hidden">
-    <p><strong>Données</strong></p>
-    <p><span id="value">-</span></p>
+    <p><strong>Timestamp : </strong><span id="value_tc">-</span></p>
+    <p><strong>Cible 1 : </strong><span id="value_c1">-</span></p>
+    <p><strong>Cible 2 : </strong><span id="value_c2">-</span></p>
   </div>
 </div>
 <div id="controls" class="content">
@@ -170,7 +171,7 @@ console.log(tt);
 d3.csv(filename, function(data) {
 
   //what are min and max ?
-  var maxTC = new Date(tt.t4.fin);
+  var maxTC = new Date(d3.max(data, function(d) { return new Date(d.Timecode);}));
   var minTC = new Date(tt.t0.deb);
 
   // var minTC = new Date(tt.t0.deb);
@@ -277,13 +278,20 @@ d3.csv(filename, function(data) {
                     .style("opacity","0")
                     .on("mouseover", function(d) {
                         var xPosition = parseFloat(d3.select(this).attr("cx"))+50;
-                        var yPosition = parseFloat(d3.select(this).attr("cy"))-40;
+                        var yPosition = parseFloat(d3.select(this).attr("cy"))-70;
 
-                        d3.select("#tooltip")
-                          .style("left", xPosition + "px")
-                          .style("top", yPosition + "px")
-                          .select("#value")
-                          .text(d.Timecode);
+                        var tooltip_div = d3.select("#tooltip")
+                                            .style("left", xPosition + "px")
+                                            .style("top", yPosition + "px");
+                        
+                        tooltip_div.select("#value_tc")
+                                   .text(d.Timecode);
+
+                        tooltip_div.select("#value_c1")
+                                   .text(d.Target_1_Role);
+
+                        tooltip_div.select("#value_c2")
+                                   .text(d.Target_2_Role);
 
                           d3.select("#tooltip").classed("hidden", false);
                           d3.select(this).style("fill","#fc6d00")
@@ -454,6 +462,22 @@ function drawBreaks (this_tt, fx){
       .attr("width", fx(new Date(this_tt.t4.deb))-fx(new Date(this_tt.t3.fin)))
       .attr("height", height)
       .style("fill","#0e73aa")
+      .style("fill-opacity","10%");
+  
+  svg.append("rect")
+      .attr("x", fx(new Date(this_tt.t4.fin)))
+      .attr("y", 0)
+      .attr("width", 15)
+      .attr("height", height)
+      .style("fill","#FF8C00")
+      .style("fill-opacity","10%");
+
+  svg.append("rect")
+      .attr("x", fx(new Date(this_tt.t0.deb))-15)
+      .attr("y", 0)
+      .attr("width", 15)
+      .attr("height", height)
+      .style("fill","#FF8C00")
       .style("fill-opacity","10%");
 
 }
